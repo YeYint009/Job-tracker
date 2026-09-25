@@ -1,13 +1,28 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { jobs as initialJob } from "./features/jobs/jobs";
 import { JobCard } from "./features/jobs/JobCard";
+import type { Job } from "./features/jobs/job"; 
+
+const getInitialJobs = () => {
+  const savedJobs = localStorage.getItem("jobs");
+
+  if (savedJobs) {
+    return JSON.parse(savedJobs);
+  }
+
+  return initialJob;
+};
 
 function App() {
-  const [jobs, setJobs] = useState(initialJob);
+  const [jobs, setJobs] = useState<Job[]>(getInitialJobs);
   const [salary, setSalary] = useState("");
   const [company, setCompany] = useState("");
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+
+  useEffect(() => {
+    localStorage.setItem("jobs", JSON.stringify(jobs));
+  }, [jobs]);
 
   const handleAddJob = () => {
     if (!company.trim() || !salary) {
